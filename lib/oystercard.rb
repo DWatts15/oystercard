@@ -1,6 +1,6 @@
 # Makers Week 4 challenge: Oyster Card
 class Oystercard
-  attr_reader :balance, :in_journey, :MIN_FARE
+  attr_reader :balance, :in_journey, :MIN_FARE, :entry_station, :exit_station
 
   MAX_BALANCE = 90
   MIN_BALANCE = 1
@@ -8,7 +8,7 @@ class Oystercard
   
   def initialize(balance = 0)
     @balance = balance
-    @in_journey = false
+    # @in_journey = false
   end
 
   def top_up(amount)
@@ -17,17 +17,19 @@ class Oystercard
   end
 
   def in_journey?
-    @in_journey
+    !!entry_station
+    # @in_journey
   end
 
-  def touch_in
+  def touch_in(station)
     fail "insufficient balance" if balance < MIN_BALANCE
-    @in_journey = true 
+    @entry_station = station
+    # @in_journey = true 
   end
 
-  def touch_out
+  def touch_out(station)
     deduct(MIN_FARE)
-    @in_journey = false
+    @exit_station = station
   end
 
   private

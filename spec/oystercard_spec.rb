@@ -3,6 +3,8 @@ require 'oystercard'
 describe Oystercard do
 
   let(:oystercard) {Oystercard.new}
+  let(:entry_station){ double :station }
+  let(:exit_station){ double :station }
   
   it {expect(oystercard).to respond_to(:balance)}
 
@@ -31,7 +33,7 @@ describe Oystercard do
 
   it "should deduct a fare from the card" do
     oystercard.top_up(50)
-    oystercard.touch_out
+    oystercard.touch_out(exit_station)
     expect(oystercard.balance).to eq(49)
   end
 
@@ -41,28 +43,41 @@ describe Oystercard do
 
   it "can touch in" do
     oystercard.top_up(5)
-    oystercard.touch_in
+    oystercard.touch_in(entry_station)
     expect(oystercard).to be_in_journey
   end
 
   it "can touch out" do
-    oystercard.touch_out
+    oystercard.touch_out(exit_station)
     expect(oystercard).not_to be_in_journey
-    expect { oystercard.touch_out }.to change { oystercard.balance }.by (-Oystercard::MIN_FARE)
+    expect { oystercard.touch_out(exit_station) }.to change { oystercard.balance }.by (-Oystercard::MIN_FARE)
   end
 
   it 'will not touch in if under minimum balance' do
-    expect{ oystercard.touch_in }.to raise_error "insufficient balance"
+    expect{ oystercard.touch_in(entry_station) }.to raise_error "insufficient balance"
   end
 
   # it 'deducts a minimum fare from card when used' do
   #   expect { oystercard.touch_out }.to change { oystercard.balance }.by (-Oystercard::MIN_FARE)
   # end
 
-  # let(:station){ double :station }
+  it "stores the entry station" do
+    oystercard.top_up(40)
+    oystercard.touch_in(entry_station)
+    expect(oystercard.entry_station).to eq entry_station
+  end
 
-  # it "stores the entry station" do
-  #   oystercard.touch_in
-  #   expect(oystercard.entry_station).to eq station
-  # end
+  it "removes entry station after touch out" do
+    oystercard.top_up(40)
+    oystercard.touch_in(entry_station)
+    oystercard.touch_out(exit_station)
+    expect(oystercard).not_to be_in_journey
+  end
+
+  it "stores exit station" do
+    oystercard.top_up(40)
+    oystercard.touch_in(entry_station)
+    oystercard.touch_out(exit_station)
+    expect(oystercard.exit_station).to eq exit_station
+  end
 end
