@@ -74,10 +74,21 @@ describe Oystercard do
     expect(oystercard).not_to be_in_journey
   end
 
-  it "stores exit station" do
+  it "accepts exit station" do
     oystercard.top_up(40)
     oystercard.touch_in(entry_station)
     oystercard.touch_out(exit_station)
     expect(oystercard.exit_station).to eq exit_station
+  end
+
+  it "instantiates with an empty journeys list" do
+    expect(oystercard.journey_list).to eq([])
+  end
+
+  it "stores one journey of entry and exit stations as a hash" do
+    oystercard.top_up(40)
+    oystercard.touch_in("airport")
+    oystercard.touch_out("city")
+    expect(oystercard.journey).to eq({:entry_station => "airport", :exit_station => "city"})
   end
 end
