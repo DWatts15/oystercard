@@ -91,4 +91,11 @@ describe Oystercard do
     oystercard.touch_out("city")
     expect(oystercard.journey).to eq({:entry_station => "airport", :exit_station => "city"})
   end
+
+  it "adds the pair of entry and exit stations to the journey list on touch_out" do
+    oystercard.top_up(40)
+    oystercard.touch_in("airport")
+    oystercard.touch_out("city")
+    expect(oystercard.journey_list).to eq([{:entry_station => "airport", :exit_station => "city"}])
+  end
 end

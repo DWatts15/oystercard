@@ -32,6 +32,7 @@ class Oystercard
     @exit_station = station
     @entry_station = nil
     @journey[:exit_station] = station
+    @journey_list.push(@journey)
   end
 
   private
